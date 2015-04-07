@@ -1,4 +1,5 @@
 {-#LANGUAGE OverloadedStrings#-}
+{-#LANGUAGE FlexibleContexts#-}
 {-#LANGUAGE TemplateHaskell#-}
 {-#LANGUAGE QuasiQuotes#-}
 
@@ -29,6 +30,10 @@ main =
         (dr (3*pi/2) dz) * dx `shouldBe` cube 0 (-1) 0
       it "route 2*pi" $ do
         (dr (2*pi) dz) * dx `shouldBe` cube 1 0 0
+      it "multi" $ do
+        dx * dy `shouldBe` dz
+      it "multi" $ do
+        dy * dx `shouldBe` (-dz)
     describe "Block" $ do
       it "dx" $ do
         block [dx,dx] `shouldBe` block [dx]
@@ -38,3 +43,7 @@ main =
         block [dx,dy] - block [dy] `shouldBe` block [dx]
       it "convolution(dx * [-2*dx,2*dx])" $ do
         block [dx] * block [-2*dx,2*dx] `shouldBe` block [-dx,3*dx]
+    describe "ToSTL" $ do
+      it "Block Cube" $ do
+        writeFileStl "tmp.stl" (block [dx] :: Block Cube) `shouldReturn` ()
+        writeFileStl "house.stl" house `shouldReturn` ()

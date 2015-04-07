@@ -6,6 +6,9 @@ Cube is DSL for 3D printing.
 
 This indents to make original blocks and prototypes for hobby.
 
+This DSL is based on mathematical algebra.
+Cube is the same as Quaternion.
+Block is set of Cube. It allows boolian operations(and, subtruct and convolution).
 
 ## Getting started
 
