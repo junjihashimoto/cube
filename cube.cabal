@@ -1,5 +1,5 @@
 name:                cube
-version:             0.1.0
+version:             0.2.0
 synopsis:            Cubic DSL for 3D printing
 description:         Cube is DSL for 3D printing.
                      .
@@ -31,6 +31,10 @@ source-repository head
   type:           git
   location:       https://github.com/junjihashimoto/cube.git
 
+flag sample
+  description: Build sample programs
+  default: False
+
 library
   exposed-modules:     Language.Cube
   -- other-modules:       
@@ -38,11 +42,29 @@ library
   build-depends:       base >=4 && <5
                      , STL
                      , cereal
-                     , bytestring
+                     , bytestring >= 0.10.2
                      , containers
   -- hs-source-dirs:      
   default-language:    Haskell2010
   ghc-options:       -Wall
+
+executable house
+  if flag(sample)
+    buildable: True
+  else
+    buildable: False
+  ghc-options:       -Wall
+  build-depends:       base >=4 && <5
+                     , cube
+                     , STL
+                     , cereal
+                     , bytestring
+                     , containers
+                     , hspec
+  hs-source-dirs:    sample
+  main-is:           house.hs
+  Extensions:        DeriveDataTypeable
+
 
 test-suite test
   type:              exitcode-stdio-1.0
