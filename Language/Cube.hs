@@ -121,6 +121,9 @@ type Cube = Quaternion Float
 instance Functor Quaternion where
   fmap func Quaternion{..} = Quaternion (func us) (func ux) (func uy) (func uz)
 
+instance Semigroup a => Semigroup (Quaternion a) where
+  Quaternion s x y z <> (Quaternion s' x' y' z') = Quaternion (s <> s') (x <> x') (y <> y') (z <> z')
+
 instance Num a => Conjugate (Quaternion a) where
   conjugate (Quaternion s x y z) = Quaternion s (-x) (-y) (-z)
 
@@ -138,7 +141,7 @@ instance Delta Cube where
   dR theta a i = let r = (dr theta a)
                      tmp = fmap round (r * i * conjugate r) :: Quaternion Integer
                  in fmap fromIntegral tmp
-instance (Num a) => Monoid (Quaternion a) where
+instance (Num a, Semigroup a) => Monoid (Quaternion a) where
   mappend a b = a + b 
   mempty = Quaternion 0 0 0 0
 
@@ -190,6 +193,9 @@ instance Num STL where
   signum _ = error "signum is not defined for STL"
   fromInteger _ = error "fromInteger is not defined for STL"
 
+instance Semigroup STL where
+  STL an atri <> (STL bn btri) = STL (an <> bn) (atri <> btri)
+
 instance Num Stl where
   (+) (Stl a) (Stl b) = Stl $ a + b
   (-) (Stl a) (Stl b) = Stl $ a - b
@@ -197,6 +203,9 @@ instance Num Stl where
   abs _ = error "abs is not defined for STL"
   signum _ = error "signum is not defined for STL"
   fromInteger _ = error "fromInteger is not defined for STL"
+
+instance Semigroup Stl where
+  Stl a <> (Stl b) = Stl $ a <> b
 
 -- | Utility function of generating Block from list of cube
 block :: (Ord a) => [a] -> Block a
@@ -234,6 +243,9 @@ instance Monoid Stl where
   mappend (Stl a) (Stl b) = Stl (a<>b)
   mempty = Stl mempty
 
+instance Semigroup Float where
+  _ <> _ = error "<> is not defined for Float"
+
 instance ToStl Cube where
   toStl v = Stl $ STL "" $ flip map tri2 $ \[t0,t1,t2] ->
       Triangle Nothing (
@@ -265,6 +277,9 @@ instance ToStl Cube where
 
 instance (ToStl a) => ToStl (Block a) where
   toStl (Block sets) = compaction $ foldr (<>) mempty $ map toStl $ S.toList sets
+
+instance (Semigroup a, Ord a) => Semigroup (Block a) where
+  Block a <> (Block b) = Block (a <> b)
 
 instance (Ord a, Monoid a) => Monoid (Block a) where
   mappend (Block a) (Block b) = Block (a<>b)
