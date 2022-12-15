@@ -1,5 +1,5 @@
 name:                cube
-version:             0.2.0
+version:             0.2.1
 synopsis:            Cubic DSL for 3D printing
 description:         Cube is DSL for 3D printing.
                      .
